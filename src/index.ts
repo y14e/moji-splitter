@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules.
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) 2026 Yusuke Kamiyamane
@@ -250,7 +250,7 @@ export default class TextSplitter {
 
       parent.removeChild(node);
     } else if (node.hasChildNodes()) {
-      const children = node.childNodes;
+      const children = Array.from(node.childNodes);
 
       for (let i = 0, l = children.length; i < l; i++) {
         this.#nobr(children[i]);
