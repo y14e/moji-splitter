@@ -207,7 +207,7 @@ export default class TextSplitter {
         return;
       }
 
-      const matches = [...text.matchAll(NOBR_REGEX)];
+      const matches = Array.from(text.matchAll(NOBR_REGEX));
 
       if (!matches.length) {
         return;
@@ -348,7 +348,9 @@ export default class TextSplitter {
       }
 
       const text = item.textContent;
-      const segment = [...new Intl.Segmenter().segment(text)].shift();
+      const segment = Array.from(
+        (this.#segmenter as Intl.Segmenter).segment(text),
+      ).shift();
 
       if (!segment) {
         continue;
