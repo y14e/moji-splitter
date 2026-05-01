@@ -5,19 +5,19 @@ Flexible text splitting utility for CSS animations. Supports complex line breaki
 ## Install
 
 ```bash
-npm i text-splitter
+npm i @y14e/text-splitter
 ```
 
 ```ts
 // npm
-import textSplitter from 'text-splitter';
+import textSplitter from '@y14e/text-splitter';
 
 // CDNs
-import textSplitter from 'https://esm.sh/text-splitter'
+import textSplitter from 'https://esm.sh/@y14e/text-splitter'
 // or
-import textSplitter from 'https://cdn.jsdelivr.net/npm/text-splitter/+esm';
+import textSplitter from 'https://cdn.jsdelivr.net/npm/@y14e/text-splitter/+esm';
 // or
-import textSplitter from 'https://unpkg.com/text-splitter/dist/index.js';
+import textSplitter from 'https://unpkg.com/@y14e/text-splitter/dist/index.js';
 ```
 
 ## Usage
@@ -64,5 +64,5 @@ splitter.destroy();
 ```
 
 ## Demo
-- https://y14e.github.io/text-splitter-ts/
-- https://y14e.github.io/text-splitter-ts/test.html
+- https://y14e.github.io/text-splitter/
+- https://y14e.github.io/text-splitter/test.html

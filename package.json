@@ -1,5 +1,5 @@
 {
-  "name": "text-splitter",
+  "name": "@y14e/text-splitter",
   "version": "1.0.0",
   "description": "Flexible text splitting utility for CSS animations",
   "type": "module",
