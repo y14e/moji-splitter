@@ -24,7 +24,8 @@ export interface TextSplitterOptions {
 // [Constants]
 // -----------------------------------------------------------------------------
 
-const NOBR_REGEX = /[[[\P{scx=Han}]&&[\P{scx=Hang}]&&[\P{scx=Hira}]&&[\P{scx=Kana}]&&[\p{L}]]!-,.->@\[-`\{-~\u00A0]+/gv;
+const NOBR_REGEX =
+  /[[[\P{scx=Han}]&&[\P{scx=Hang}]&&[\P{scx=Hira}]&&[\P{scx=Kana}]&&[\p{L}]]!-,.->@\[-`\{-~\u00A0]+/gv;
 const LBR_PROHIBIT_START_REGEX =
   /^[[[\p{Pd}]--[―]]\p{Pe}\p{Pf}\p{Po}\u00A0々〵〻ぁぃぅぇぉっゃゅょゎゕゖ゛-ゞァィゥェォッャュョヮヵヶー-ヾㇰ-ㇿ]|\p{Pi}/v;
 const LBR_PROHIBIT_END_REGEX = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
@@ -155,7 +156,9 @@ export default class TextSplitter {
       char.style.setProperty('--char-index', String(i));
     }
 
-    const spans = this.#fragment.querySelectorAll<HTMLElement>(':is([data-word], [data-char]):not([data-whitespace])');
+    const spans = this.#fragment.querySelectorAll<HTMLElement>(
+      ':is([data-word], [data-char]):not([data-whitespace])',
+    );
 
     for (let i = 0, l = spans.length; i < l; i++) {
       const span = spans[i];
@@ -185,7 +188,10 @@ export default class TextSplitter {
         continue;
       }
 
-      if (window.getComputedStyle(whitespace).getPropertyValue('display') !== 'inline') {
+      if (
+        window.getComputedStyle(whitespace).getPropertyValue('display') !==
+        'inline'
+      ) {
         whitespace.innerHTML = '&nbsp;';
       }
     }
@@ -224,7 +230,10 @@ export default class TextSplitter {
         const offset = match.index;
 
         if (offset > index) {
-          parent.insertBefore(document.createTextNode(text.slice(index, offset)), node);
+          parent.insertBefore(
+            document.createTextNode(text.slice(index, offset)),
+            node,
+          );
         }
 
         const span = document.createElement('span');
@@ -274,7 +283,9 @@ export default class TextSplitter {
       if (child.nodeType === Node.TEXT_NODE) {
         const parent = child.parentNode;
         const segments = Array.from(
-          this.#getSegmenter(by, parent).segment(text.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' ')),
+          this.#getSegmenter(by, parent).segment(
+            text.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '),
+          ),
         );
 
         for (let j = 0, m = segments.length; j < m; j++) {
@@ -286,11 +297,17 @@ export default class TextSplitter {
 
           const span = document.createElement('span');
           const text = segment.segment;
-          const types = [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean);
+          const types = [
+            by,
+            segment.segment.charCodeAt(0) === 32 && 'whitespace',
+          ].filter(Boolean);
 
           for (let k = 0, n = types.length; k < n; k++) {
             const type = types[k];
-            span.setAttribute(`data-${type}`, type !== 'whitespace' ? text : '');
+            span.setAttribute(
+              `data-${type}`,
+              type !== 'whitespace' ? text : '',
+            );
           }
 
           span.textContent = text;
@@ -337,7 +354,11 @@ export default class TextSplitter {
         continue;
       }
 
-      if (previous && previous.textContent.trim() !== '' && LBR_PROHIBIT_START_REGEX.test(segment.segment)) {
+      if (
+        previous &&
+        previous.textContent.trim() !== '' &&
+        LBR_PROHIBIT_START_REGEX.test(segment.segment)
+      ) {
         previous.textContent += text;
         previous.setAttribute(`data-${by}`, previous.textContent);
         item.remove();
@@ -402,7 +423,9 @@ export default class TextSplitter {
     }
 
     if (by === 'char') {
-      const spans = this.#fragment?.querySelectorAll('[data-word]:not([data-whitespace])');
+      const spans = this.#fragment?.querySelectorAll(
+        '[data-word]:not([data-whitespace])',
+      );
 
       if (!spans) {
         return;
@@ -428,9 +451,13 @@ export default class TextSplitter {
 
   #getSegmenter(by: 'word' | 'char', parent: Node | null) {
     if (by === 'word' && this.#settings.wordSegmenter) {
-      const root = (parent?.nodeType === Node.ELEMENT_NODE ? parent : this.#rootElement) as HTMLElement;
+      const root = (
+        parent?.nodeType === Node.ELEMENT_NODE ? parent : this.#rootElement
+      ) as HTMLElement;
       return new Intl.Segmenter(
-        (root.closest('[lang]') as HTMLElement)?.lang || document.documentElement.lang || 'en',
+        (root.closest('[lang]') as HTMLElement)?.lang ||
+          document.documentElement.lang ||
+          'en',
         {
           granularity: 'word',
         },
