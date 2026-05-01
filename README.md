@@ -2,11 +2,27 @@
 
 Flexible text splitting utility for CSS animations. Supports complex line breaking rules.
 
+## Install
+
+```bash
+npm i text-splitter
+```
+
+```ts
+// npm
+import textSplitter from 'text-splitter';
+
+// CDNs
+import textSplitter from 'https://esm.sh/text-splitter'
+// or
+import textSplitter from 'https://cdn.jsdelivr.net/npm/text-splitter/+esm';
+// or
+import textSplitter from 'https://unpkg.com/text-splitter/dist/index.js';
+```
+
 ## Usage
 
 ```ts
-import TextSplitter from 'text-splitter';
-
 new TextSplitter(root, options);
 // => TextSplitter
 //
