@@ -25,11 +25,18 @@
     "lint": "tsc --noEmit"
   },
   "keywords": [
-    "text",
-    "split",
-    "css",
     "animation",
-    "utility"
+    "character",
+    "css",
+    "grapheme",
+    "intl-segmenter",
+    "segmenter",
+    "split",
+    "splitter",
+    "splitting",
+    "text",
+    "utility",
+    "word"
   ],
   "author": "Yusuke Kamiyamane",
   "license": "MIT",
