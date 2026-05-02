@@ -1,39 +1,39 @@
 # Text Splitter
 
-Flexible text splitting utility for CSS animations. Supports complex line breaking rules.
+Flexible text splitting utility for CSS animations. Supports complex [line breaking rules](https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages).
 
 ## Install
 
 ```bash
-npm i @y14e/text-splitter
+npm i @y14e/moji-splitter
 ```
 
 ```ts
 // npm
-import textSplitter from '@y14e/text-splitter';
+import mojiSplitter from 'moji-splitter';
 
 // CDNs
-import textSplitter from 'https://esm.sh/@y14e/text-splitter'
+import mojiSplitter from 'https://esm.sh/moji-splitter'
 // or
-import textSplitter from 'https://cdn.jsdelivr.net/npm/@y14e/text-splitter/+esm';
+import mojiSplitter from 'https://cdn.jsdelivr.net/npm/moji-splitter/+esm';
 // or
-import textSplitter from 'https://unpkg.com/@y14e/text-splitter/dist/index.js';
+import mojiSplitter from 'https://unpkg.com/moji-splitter/dist/index.js';
 ```
 
 ## Usage
 
 ```ts
-new TextSplitter(root, options);
-// => TextSplitter
+new MojiSplitter(root, options);
+// => MojiSplitter
 //
 // root: HTMLElement
-// options (optional): TextSplitterOptions
+// options (optional): MojiSplitterOptions
 ```
 
 ## 🪄 Options
 
 ```ts
-interface TextSplitterOptions {
+interface MojiSplitterOptions {
   concatChar?: boolean;        // default: false
   lineBreakingRules?: boolean; // default: true
   wordSegmenter?: boolean;     // default: false
@@ -64,5 +64,5 @@ splitter.destroy();
 ```
 
 ## Demo
-- https://y14e.github.io/text-splitter/
-- https://y14e.github.io/text-splitter/test.html
+- https://y14e.github.io/moji-splitter/
+- https://y14e.github.io/moji-splitter/test.html

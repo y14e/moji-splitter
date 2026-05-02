@@ -1,20 +1,20 @@
 /**
- * Text Splitter
+ * Moji Splitter
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules.
  *
- * @version 1.0.1
+ * @version 1.0.3
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) 2026 Yusuke Kamiyamane
- * @see {@link https://github.com/y14e/text-splitter}
+ * @see {@link https://github.com/y14e/moji-splitter}
  */
 
 // -----------------------------------------------------------------------------
 // [Types]
 // -----------------------------------------------------------------------------
 
-export interface TextSplitterOptions {
+export interface MojiSplitterOptions {
   readonly concatChar?: boolean;
   readonly lineBreakingRules?: boolean;
   readonly wordSegmenter?: boolean;
@@ -35,14 +35,14 @@ const LBR_INSEPARATABLE_REGEX = /[―‥…]/u;
 // [API]
 // -----------------------------------------------------------------------------
 
-export default class TextSplitter {
+export default class MojiSplitter {
   #rootElement: HTMLElement;
   #defaults = {
     concatChar: false,
     lineBreakingRules: true,
     wordSegmenter: false,
   };
-  #settings: Required<TextSplitterOptions>;
+  #settings: Required<MojiSplitterOptions>;
   #wordElements: HTMLElement[] | null;
   #charElements: HTMLElement[] | null;
   #original: string | null;
@@ -50,7 +50,7 @@ export default class TextSplitter {
   #segmenter: Intl.Segmenter | null;
   #isDestroyed = false;
 
-  constructor(root: HTMLElement, options: TextSplitterOptions = {}) {
+  constructor(root: HTMLElement, options: MojiSplitterOptions = {}) {
     if (!root) {
       throw new Error('Root element missing');
     }
@@ -72,7 +72,7 @@ export default class TextSplitter {
     }
 
     this.#isDestroyed = true;
-    this.#rootElement.removeAttribute('data-text-splitter-initialized');
+    this.#rootElement.removeAttribute('data-moji-splitter-initialized');
     this.#rootElement.innerHTML = this.#original as string;
     const style = this.#rootElement.style;
     style.removeProperty('--word-length');
@@ -196,7 +196,7 @@ export default class TextSplitter {
       }
     }
 
-    this.#rootElement.setAttribute('data-text-splitter-initialized', '');
+    this.#rootElement.setAttribute('data-moji-splitter-initialized', '');
   }
 
   #nobr(node: Node = this.#fragment as DocumentFragment) {
