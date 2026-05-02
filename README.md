@@ -1,6 +1,6 @@
 # Moji Splitter
 
-Flexible text splitting utility for CSS animations. Supports complex [line breaking rules](https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages).
+Flexible text splitting utility for CSS animations. Supports complex [line breaking rules](https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages) (ja: 禁則処理).
 
 ## Install
 
@@ -46,7 +46,7 @@ If `true`, enables concatenation at the character level.
 
 ### `lineBreakingRules`
 
-If `false`, disables [line breaking rules](https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages).
+If `false`, disables line breaking rules.
 
 ### `wordSegmenter`
 
