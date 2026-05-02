@@ -5,7 +5,7 @@ Flexible text splitting utility for CSS animations. Supports complex [line break
 ## Install
 
 ```bash
-npm i @y14e/moji-splitter
+npm i moji-splitter
 ```
 
 ```ts
