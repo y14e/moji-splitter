@@ -1,4 +1,4 @@
-# Text Splitter
+# Moji Splitter
 
 Flexible text splitting utility for CSS animations. Supports complex [line breaking rules](https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages).
 
