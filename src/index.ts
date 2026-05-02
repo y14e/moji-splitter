@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules.
  *
- * @version 1.1.1
+ * @version 1.1.2
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) 2026 Yusuke Kamiyamane

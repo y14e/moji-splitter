@@ -1,6 +1,6 @@
 {
   "name": "moji-splitter",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Flexible text splitting utility for CSS animations",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -29,6 +29,8 @@
     "css",
     "grapheme",
     "intl-segmenter",
+    "line-breaking",
+    "kinsoku",
     "segmenter",
     "split",
     "splitter",
