@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.1.3
+ * @version 1.2.0
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) 2026 Yusuke Kamiyamane
@@ -73,7 +73,11 @@ export default class MojiSplitter {
 
     this.#isDestroyed = true;
     this.#rootElement.removeAttribute('data-moji-splitter-initialized');
-    this.#rootElement.innerHTML = this.#original as string;
+
+    if (this.#original !== null) {
+      this.#rootElement.innerHTML = this.#original;
+    }
+
     const style = this.#rootElement.style;
     style.removeProperty('--word-length');
     style.removeProperty('--char-length');
@@ -199,7 +203,15 @@ export default class MojiSplitter {
     this.#rootElement.setAttribute('data-moji-splitter-initialized', '');
   }
 
-  #nobr(node: Node = this.#fragment as DocumentFragment) {
+  #nobr(node?: Node) {
+    if (!node) {
+      if (!this.#fragment) {
+        return;
+      }
+
+      node = this.#fragment;
+    }
+
     if (node.nodeType === Node.TEXT_NODE) {
       const text = node.textContent;
 
@@ -258,7 +270,15 @@ export default class MojiSplitter {
     }
   }
 
-  #split(by: 'word' | 'char', node: Node = this.#fragment as DocumentFragment) {
+  #split(by: 'word' | 'char', node?: Node) {
+    if (!node) {
+      if (!this.#fragment) {
+        return;
+      }
+
+      node = this.#fragment;
+    }
+
     const items = by === 'word' ? this.#wordElements : this.#charElements;
 
     if (!items) {
@@ -282,8 +302,14 @@ export default class MojiSplitter {
 
       if (child.nodeType === Node.TEXT_NODE) {
         const parent = child.parentNode;
+        const segmenter = this.#getSegmenter(by, parent);
+
+        if (!segmenter) {
+          continue;
+        }
+
         const segments = Array.from(
-          this.#getSegmenter(by, parent).segment(
+          segmenter.segment(
             text.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '),
           ),
         );
@@ -348,9 +374,12 @@ export default class MojiSplitter {
       }
 
       const text = item.textContent;
-      const segment = Array.from(
-        (this.#segmenter as Intl.Segmenter).segment(text),
-      ).shift();
+
+      if (!this.#segmenter) {
+        continue;
+      }
+
+      const segment = Array.from(this.#segmenter.segment(text)).shift();
 
       if (!segment) {
         continue;
@@ -453,19 +482,27 @@ export default class MojiSplitter {
 
   #getSegmenter(by: 'word' | 'char', parent: Node | null) {
     if (by === 'word' && this.#settings.wordSegmenter) {
-      const root = (
-        parent?.nodeType === Node.ELEMENT_NODE ? parent : this.#rootElement
-      ) as HTMLElement;
+      const root =
+        parent?.nodeType === Node.ELEMENT_NODE ? parent : this.#rootElement;
+
+      if (!(root instanceof HTMLElement)) {
+        return null;
+      }
+
+      const closest = root.closest('[lang]');
+
+      if (!(closest instanceof HTMLElement)) {
+        return null;
+      }
+
       return new Intl.Segmenter(
-        (root.closest('[lang]') as HTMLElement)?.lang ||
-          document.documentElement.lang ||
-          'en',
+        closest?.lang || document.documentElement.lang || 'en',
         {
           granularity: 'word',
         },
       );
     } else {
-      return this.#segmenter as Intl.Segmenter;
+      return this.#segmenter;
     }
   }
 }
