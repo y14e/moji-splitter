@@ -1,9 +1,9 @@
 /**
  * Moji Splitter
  * Flexible text splitting utility for CSS animations.
- * Supports complex line breaking rules.
+ * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.1.2
+ * @version 1.1.3
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) 2026 Yusuke Kamiyamane
@@ -51,7 +51,7 @@ export default class MojiSplitter {
   #isDestroyed = false;
 
   constructor(root: HTMLElement, options: MojiSplitterOptions = {}) {
-    if (!root) {
+    if (!(root instanceof HTMLElement)) {
       throw new Error('Root element missing');
     }
 
