@@ -32,7 +32,7 @@ const LBR_PROHIBIT_END_REGEX = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
 const LBR_INSEPARATABLE_REGEX = /[―‥…]/u;
 
 // -----------------------------------------------------------------------------
-// [API]
+// [APIs]
 // -----------------------------------------------------------------------------
 
 export default class MojiSplitter {
