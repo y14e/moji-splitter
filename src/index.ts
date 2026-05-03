@@ -10,9 +10,9 @@
  * @see {@link https://github.com/y14e/moji-splitter}
  */
 
-// -----------------------------------------------------------------------------
-// [Types]
-// -----------------------------------------------------------------------------
+// =============================================================================
+// Types
+// =============================================================================
 
 export interface MojiSplitterOptions {
   readonly concatChar?: boolean;
@@ -20,9 +20,9 @@ export interface MojiSplitterOptions {
   readonly wordSegmenter?: boolean;
 }
 
-// -----------------------------------------------------------------------------
-// [Constants]
-// -----------------------------------------------------------------------------
+// =============================================================================
+// Constants
+// =============================================================================
 
 const NOBR_REGEX =
   /[[[\P{scx=Han}]&&[\P{scx=Hang}]&&[\P{scx=Hira}]&&[\P{scx=Kana}]&&[\p{L}]]!-,.->@\[-`\{-~\u00A0]+/gv;
@@ -31,9 +31,9 @@ const LBR_PROHIBIT_START_REGEX =
 const LBR_PROHIBIT_END_REGEX = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
 const LBR_INSEPARATABLE_REGEX = /[―‥…]/u;
 
-// -----------------------------------------------------------------------------
-// [APIs]
-// -----------------------------------------------------------------------------
+// =============================================================================
+// APIs
+// =============================================================================
 
 export default class MojiSplitter {
   #rootElement: HTMLElement;
@@ -400,8 +400,13 @@ export default class MojiSplitter {
       }
     }
 
-    const concat = (item: HTMLElement, regex: RegExp, index: number) => {
+    function concat(item: HTMLElement, regex: RegExp, index: number) {
       const offset = index + 1;
+
+      if (!items) {
+        return;
+      }
+
       let next = items[offset];
       let text: string;
 
@@ -413,7 +418,7 @@ export default class MojiSplitter {
         items.splice(offset, 1);
         next = items[offset];
       }
-    };
+    }
 
     for (let i = 0, l = items.length; i < l; i++) {
       const item = items[i];
