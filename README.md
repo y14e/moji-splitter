@@ -15,7 +15,7 @@ import mojiSplitter from 'moji-splitter';
 // CDNs
 import mojiSplitter from 'https://esm.sh/moji-splitter'
 // or
-import mojiSplitter from 'https://cdn.jsdelivr.net/npm/moji-splitter/+esm';
+import mojiSplitter from 'https://cdn.jsdelivr.net/npm/moji-splitter/dist/index.js';
 // or
 import mojiSplitter from 'https://unpkg.com/moji-splitter/dist/index.js';
 ```
