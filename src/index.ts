@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.2.0
+ * @version 1.2.1
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) 2026 Yusuke Kamiyamane
@@ -270,7 +270,7 @@ export default class MojiSplitter {
     }
   }
 
-  #split(by: 'word' | 'char', node?: Node) {
+  #split(granularity: 'word' | 'char', node?: Node) {
     if (!node) {
       if (!this.#fragment) {
         return;
@@ -279,7 +279,8 @@ export default class MojiSplitter {
       node = this.#fragment;
     }
 
-    const items = by === 'word' ? this.#wordElements : this.#charElements;
+    const items =
+      granularity === 'word' ? this.#wordElements : this.#charElements;
 
     if (!items) {
       return;
@@ -302,7 +303,7 @@ export default class MojiSplitter {
 
       if (child.nodeType === Node.TEXT_NODE) {
         const parent = child.parentNode;
-        const segmenter = this.#getSegmenter(by, parent);
+        const segmenter = this.#getSegmenter(granularity, parent);
 
         if (!segmenter) {
           continue;
@@ -324,7 +325,7 @@ export default class MojiSplitter {
           const span = document.createElement('span');
           const text = segment.segment;
           const types = [
-            by,
+            granularity,
             segment.segment.charCodeAt(0) === 32 && 'whitespace',
           ].filter(Boolean);
 
@@ -343,7 +344,7 @@ export default class MojiSplitter {
 
         child.remove();
       } else if (
-        by === 'word' &&
+        granularity === 'word' &&
         child.nodeType === Node.ELEMENT_NODE &&
         child instanceof HTMLElement &&
         child.hasAttribute('data-_nobr')
@@ -352,13 +353,14 @@ export default class MojiSplitter {
         child.setAttribute('data-word', text);
         items.push(child);
       } else if (child.hasChildNodes()) {
-        this.#split(by, child);
+        this.#split(granularity, child);
       }
     }
   }
 
-  #lbr(by: 'word' | 'char') {
-    const items = by === 'word' ? this.#wordElements : this.#charElements;
+  #lbr(granularity: 'word' | 'char') {
+    const items =
+      granularity === 'word' ? this.#wordElements : this.#charElements;
 
     if (!items) {
       return;
@@ -391,7 +393,7 @@ export default class MojiSplitter {
         LBR_PROHIBIT_START_REGEX.test(segment.segment)
       ) {
         previous.textContent += text;
-        previous.setAttribute(`data-${by}`, previous.textContent);
+        previous.setAttribute(`data-${granularity}`, previous.textContent);
         item.remove();
         items.splice(i, 1);
         i--;
@@ -413,7 +415,7 @@ export default class MojiSplitter {
       while (next && regex.test(next.textContent)) {
         text = next.textContent;
         item.textContent += text;
-        item.setAttribute(`data-${by}`, item.textContent);
+        item.setAttribute(`data-${granularity}`, item.textContent);
         next.remove();
         items.splice(offset, 1);
         next = items[offset];
@@ -439,7 +441,7 @@ export default class MojiSplitter {
 
         if (next && text.trim() !== '') {
           next.textContent = item.textContent + text;
-          next.setAttribute(`data-${by}`, next.textContent);
+          next.setAttribute(`data-${granularity}`, next.textContent);
           item.remove();
           items.splice(i, 1);
         }
@@ -458,7 +460,7 @@ export default class MojiSplitter {
       }
     }
 
-    if (by === 'char') {
+    if (granularity === 'char') {
       const spans = this.#fragment?.querySelectorAll(
         '[data-word]:not([data-whitespace])',
       );
@@ -485,8 +487,8 @@ export default class MojiSplitter {
     }
   }
 
-  #getSegmenter(by: 'word' | 'char', parent: Node | null) {
-    if (by === 'word' && this.#settings.wordSegmenter) {
+  #getSegmenter(granularity: 'word' | 'char', parent: Node | null) {
+    if (granularity === 'word' && this.#settings.wordSegmenter) {
       const root =
         parent?.nodeType === Node.ELEMENT_NODE ? parent : this.#rootElement;
 
