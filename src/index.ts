@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.2.3
+ * @version 1.3.0
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) 2026 Yusuke Kamiyamane
@@ -43,11 +43,11 @@ export default class MojiSplitter {
     wordSegmenter: false,
   };
   #settings: Required<MojiSplitterOptions>;
-  #wordElements: HTMLElement[] | null;
-  #charElements: HTMLElement[] | null;
+  #wordElements: HTMLElement[] | null = [];
+  #charElements: HTMLElement[] | null = [];
   #original: string | null;
-  #fragment: DocumentFragment | null;
-  #segmenter: Intl.Segmenter | null;
+  #fragment: DocumentFragment | null = new DocumentFragment();
+  #segmenter: Intl.Segmenter | null = new Intl.Segmenter();
   #isDestroyed = false;
 
   constructor(root: HTMLElement, options: MojiSplitterOptions = {}) {
@@ -57,12 +57,7 @@ export default class MojiSplitter {
 
     this.#rootElement = root;
     this.#settings = { ...this.#defaults, ...options };
-    this.#wordElements = [];
-    this.#charElements = [];
     this.#original = this.#rootElement.innerHTML;
-    this.#fragment = new DocumentFragment();
-    this.#segmenter = new Intl.Segmenter();
-    this.#isDestroyed = false;
     this.#initialize();
   }
 
