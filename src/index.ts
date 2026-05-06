@@ -3,10 +3,10 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.3.1
+ * @version 1.3.2
  * @author Yusuke Kamiyamane
  * @license MIT
- * @copyright Copyright (c) 2026 Yusuke Kamiyamane
+ * @copyright Copyright (c) Yusuke Kamiyamane
  * @see {@link https://github.com/y14e/moji-splitter}
  */
 
@@ -61,7 +61,7 @@ export default class MojiSplitter {
     this.#initialize();
   }
 
-  destroy(): void {
+  destroy() {
     if (this.#isDestroyed) {
       return;
     }
@@ -80,12 +80,11 @@ export default class MojiSplitter {
     const children = this.#rootElement.childNodes;
 
     if (!this.#fragment) {
-      return;
+      throw new Error('Unreachable');
     }
 
     for (let i = 0, l = children.length; i < l; i++) {
-      const child = children[i] as Node;
-      this.#fragment.appendChild(child.cloneNode(true));
+      this.#fragment.appendChild((children[i] as Node).cloneNode(true));
     }
 
     this.#nobr();
@@ -103,7 +102,7 @@ export default class MojiSplitter {
     }
 
     if (!this.#charElements) {
-      return;
+      throw new Error('Unreachable');
     }
 
     for (let i = 0, l = this.#charElements.length; i < l; i++) {
@@ -131,7 +130,7 @@ export default class MojiSplitter {
     }
 
     if (!this.#wordElements) {
-      return;
+      throw new Error('Unreachable');
     }
 
     for (let i = 0, l = this.#wordElements.length; i < l; i++) {
@@ -307,7 +306,7 @@ export default class MojiSplitter {
       ).shift() as Intl.SegmentData;
 
       if (
-        previous &&
+        previous !== null &&
         previous.textContent.trim() !== '' &&
         LBR_PROHIBIT_START_REGEX.test(segment.segment)
       ) {
@@ -339,26 +338,30 @@ export default class MojiSplitter {
     for (let i = 0, l = items.length; i < l; i++) {
       const item = items[i];
 
-      if (item && LBR_PROHIBIT_END_REGEX.test(item.textContent)) {
-        concat(item, LBR_PROHIBIT_END_REGEX, i);
-        const next = items[i + 1] as HTMLElement;
-        const text = next.textContent;
+      if (!item || !LBR_PROHIBIT_END_REGEX.test(item.textContent)) {
+        continue;
+      }
 
-        if (next && text.trim() !== '') {
-          next.textContent = item.textContent + text;
-          next.setAttribute(`data-${granularity}`, next.textContent);
-          item.remove();
-          items.splice(i, 1);
-        }
+      concat(item, LBR_PROHIBIT_END_REGEX, i);
+      const next = items[i + 1];
+      const text = next?.textContent;
+
+      if (next && text?.trim() !== '') {
+        next.textContent = item.textContent + text;
+        next.setAttribute(`data-${granularity}`, next.textContent);
+        item.remove();
+        items.splice(i, 1);
       }
     }
 
     for (let i = 0, l = items.length; i < l; i++) {
       const item = items[i];
 
-      if (item && LBR_INSEPARATABLE_REGEX.test(item.textContent)) {
-        concat(item, LBR_INSEPARATABLE_REGEX, i);
+      if (!item || !LBR_INSEPARATABLE_REGEX.test(item.textContent)) {
+        continue;
       }
+
+      concat(item, LBR_INSEPARATABLE_REGEX, i);
     }
 
     if (granularity === 'char') {
