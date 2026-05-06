@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.3.2
+ * @version 1.3.3
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -123,7 +123,7 @@ export default class MojiSplitter {
       if (
         Array.from(
           (this.#segmenter as Intl.Segmenter).segment(span.textContent),
-        ).length > 1
+        ).length
       ) {
         style.setProperty('white-space', 'nowrap');
       }
@@ -306,8 +306,7 @@ export default class MojiSplitter {
       ).shift() as Intl.SegmentData;
 
       if (
-        previous !== null &&
-        previous.textContent.trim() !== '' &&
+        previous?.textContent.trim() &&
         LBR_PROHIBIT_START_REGEX.test(segment.segment)
       ) {
         previous.textContent += text;
@@ -346,7 +345,7 @@ export default class MojiSplitter {
       const next = items[i + 1];
       const text = next?.textContent;
 
-      if (next && text?.trim() !== '') {
+      if (next && text?.trim()) {
         next.textContent = item.textContent + text;
         next.setAttribute(`data-${granularity}`, next.textContent);
         item.remove();
@@ -373,7 +372,7 @@ export default class MojiSplitter {
         const span = spans[i] as HTMLElement;
         const text = span.textContent;
 
-        if (text !== '') {
+        if (text) {
           span.setAttribute('data-word', text);
         } else {
           span.remove();
