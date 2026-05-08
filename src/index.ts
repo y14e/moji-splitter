@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.3.3
+ * @version 1.3.4
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -43,8 +43,8 @@ export default class MojiSplitter {
     wordSegmenter: false,
   };
   #settings: Required<MojiSplitterOptions>;
-  #wordElements: HTMLElement[] | null = [];
-  #charElements: HTMLElement[] | null = [];
+  #wordElements: HTMLElement[] = [];
+  #charElements: HTMLElement[] = [];
   #original: string | null;
   #fragment: DocumentFragment | null = new DocumentFragment();
   #segmenter: Intl.Segmenter | null = new Intl.Segmenter();
@@ -101,10 +101,6 @@ export default class MojiSplitter {
       this.#lbr('char');
     }
 
-    if (!this.#charElements) {
-      throw new Error('Unreachable');
-    }
-
     for (let i = 0, l = this.#charElements.length; i < l; i++) {
       const char = this.#charElements[i] as HTMLElement;
       char.setAttribute('aria-hidden', 'true');
@@ -127,10 +123,6 @@ export default class MojiSplitter {
       ) {
         style.setProperty('white-space', 'nowrap');
       }
-    }
-
-    if (!this.#wordElements) {
-      throw new Error('Unreachable');
     }
 
     for (let i = 0, l = this.#wordElements.length; i < l; i++) {
@@ -382,8 +374,8 @@ export default class MojiSplitter {
   }
 
   #cleanup() {
-    this.#wordElements = null;
-    this.#charElements = null;
+    this.#wordElements.length = 0;
+    this.#charElements.length = 0;
     this.#fragment = null;
     this.#segmenter = null;
   }
