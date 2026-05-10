@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.4.1
+ * @version 1.4.2
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -48,7 +48,7 @@ export default class MojiSplitter {
   #wordElements: HTMLElement[] = [];
   #charElements: HTMLElement[] = [];
   #original: string | null;
-  #fragment: DocumentFragment | null = new DocumentFragment();
+  #fragment: DocumentFragment | null = null;
   #segmenter: Intl.Segmenter | null = new Intl.Segmenter();
   #isDestroyed = false;
 
@@ -70,7 +70,7 @@ export default class MojiSplitter {
 
     this.#isDestroyed = true;
     this.#rootElement.removeAttribute('data-moji-splitter-initialized');
-    this.#rootElement.innerHTML = this.#original as string;
+    this.#rootElement.innerHTML = this.#original ?? '';
     const style = this.#rootElement.style;
     style.removeProperty('--word-length');
     style.removeProperty('--char-length');
@@ -80,13 +80,16 @@ export default class MojiSplitter {
 
   #initialize() {
     const children = this.#rootElement.childNodes;
-
-    if (!this.#fragment) {
-      throw new Error('Unreachable');
-    }
+    this.#fragment = new DocumentFragment();
 
     for (let i = 0, l = children.length; i < l; i++) {
-      this.#fragment.appendChild((children[i] as Node).cloneNode(true));
+      const child = children[i];
+
+      if (!child) {
+        continue;
+      }
+
+      this.#fragment.appendChild(child.cloneNode(true));
     }
 
     this.#nobr();
@@ -104,7 +107,12 @@ export default class MojiSplitter {
     }
 
     for (let i = 0, l = this.#charElements.length; i < l; i++) {
-      const char = this.#charElements[i] as HTMLElement;
+      const char = this.#charElements[i];
+
+      if (!char) {
+        continue;
+      }
+
       char.setAttribute('aria-hidden', 'true');
       char.style.setProperty('--char-index', String(i));
     }
@@ -114,13 +122,18 @@ export default class MojiSplitter {
     );
 
     for (let i = 0, l = spans.length; i < l; i++) {
-      const span = spans[i] as HTMLElement;
+      const span = spans[i];
+
+      if (!span) {
+        continue;
+      }
+
       const { style } = span;
       style.setProperty('display', 'inline-block');
 
       if (
         Array.from(
-          (this.#segmenter as Intl.Segmenter).segment(span.textContent),
+          (this.#segmenter ?? new Intl.Segmenter()).segment(span.textContent),
         ).length
       ) {
         style.setProperty('white-space', 'nowrap');
@@ -128,7 +141,12 @@ export default class MojiSplitter {
     }
 
     for (let i = 0, l = this.#wordElements.length; i < l; i++) {
-      const word = this.#wordElements[i] as HTMLElement;
+      const word = this.#wordElements[i];
+
+      if (!word) {
+        continue;
+      }
+
       word.translate = false;
       word.style.setProperty('--word-index', String(i));
 
@@ -162,7 +180,11 @@ export default class MojiSplitter {
     );
 
     for (let i = 0, l = whitespaces.length; i < l; i++) {
-      const whitespace = whitespaces[i] as HTMLElement;
+      const whitespace = whitespaces[i];
+
+      if (!whitespace) {
+        continue;
+      }
 
       if (
         window.getComputedStyle(whitespace).getPropertyValue('display') !==
@@ -176,7 +198,7 @@ export default class MojiSplitter {
     this.#rootElement.setAttribute('data-moji-splitter-initialized', '');
   }
 
-  #nobr(node: Node = this.#fragment as Node) {
+  #nobr(node: Node = this.#fragment ?? new DocumentFragment()) {
     if (node.nodeType === Node.TEXT_NODE) {
       const text = node.textContent;
 
@@ -189,7 +211,7 @@ export default class MojiSplitter {
       const fragment = document.createDocumentFragment();
 
       for (const match of text.matchAll(NOBR_REGEX)) {
-        const index = match.index as number;
+        const index = match.index;
 
         if (index > lastIndex) {
           fragment.append(text.slice(lastIndex, index));
@@ -207,7 +229,11 @@ export default class MojiSplitter {
         fragment.append(text.slice(lastIndex));
       }
 
-      (node as ChildNode).replaceWith(fragment);
+      if (!(node instanceof Text)) {
+        return;
+      }
+
+      node.replaceWith(fragment);
       return;
     }
 
@@ -220,7 +246,10 @@ export default class MojiSplitter {
     }
   }
 
-  #split(granularity: Granularity, node: Node = this.#fragment as Node) {
+  #split(
+    granularity: Granularity,
+    node: Node = this.#fragment ?? new DocumentFragment(),
+  ) {
     let child = node.firstChild;
     const items =
       granularity === 'word' ? this.#wordElements : this.#charElements;
@@ -229,13 +258,16 @@ export default class MojiSplitter {
       const next = child.nextSibling;
 
       if (child.nodeType === Node.TEXT_NODE) {
+        const segmenter = this.#getSegmenter(granularity, child.parentNode);
+
+        if (!segmenter) {
+          return;
+        }
+
         const fragment = document.createDocumentFragment();
 
-        for (const segment of this.#getSegmenter(
-          granularity,
-          child.parentNode,
-        ).segment(
-          (child.textContent as string)
+        for (const segment of segmenter.segment(
+          (child.textContent ?? '')
             .replace(/[\r\n\t]/g, '')
             .replace(/\s{2,}/g, ' '),
         )) {
@@ -277,7 +309,13 @@ export default class MojiSplitter {
     let previous = null;
 
     while (count < items.length) {
-      const item = items[count] as HTMLElement;
+      const item = items[count];
+
+      if (!item) {
+        count++;
+        continue;
+      }
+
       let text = item.textContent ?? '';
 
       if (
@@ -297,12 +335,22 @@ export default class MojiSplitter {
     }
 
     function concat(index: number, regex: RegExp) {
-      const item = items[index] as HTMLElement;
+      const item = items[index];
+
+      if (!item) {
+        return;
+      }
+
       const offset = index + 1;
       let text = item.textContent ?? '';
 
       while (offset < items.length) {
-        const next = items[offset] as HTMLElement;
+        const next = items[offset];
+
+        if (!next) {
+          break;
+        }
+
         const nextText = next.textContent ?? '';
 
         if (!regex.test(nextText)) {
@@ -319,8 +367,8 @@ export default class MojiSplitter {
     }
 
     for (let i = 0; i < items.length; i++) {
-      const item = items[i] as HTMLElement;
-      const text = item.textContent ?? '';
+      const item = items[i];
+      const text = item?.textContent ?? '';
 
       if (LBR_PROHIBIT_END_REGEX.test(text)) {
         concat(i, LBR_PROHIBIT_END_REGEX);
@@ -345,11 +393,16 @@ export default class MojiSplitter {
 
     if (granularity === 'char') {
       const spans = (
-        this.#fragment as DocumentFragment
+        this.#fragment ?? new DocumentFragment()
       ).querySelectorAll<HTMLElement>('[data-word]:not([data-whitespace])');
 
       for (let i = 0, l = spans.length; i < l; i++) {
-        const span = spans[i] as HTMLElement;
+        const span = spans[i];
+
+        if (!span) {
+          continue;
+        }
+
         const text = span.textContent;
 
         if (text) {
@@ -370,9 +423,13 @@ export default class MojiSplitter {
 
   #getSegmenter(granularity: Granularity, parent: Node | null) {
     if (granularity === 'word' && this.#settings.wordSegmenter) {
-      const root = (
-        parent?.nodeType === Node.ELEMENT_NODE ? parent : this.#rootElement
-      ) as HTMLElement;
+      const root =
+        parent?.nodeType === Node.ELEMENT_NODE ? parent : this.#rootElement;
+
+      if (!(root instanceof HTMLElement)) {
+        return this.#segmenter;
+      }
+
       const closest: HTMLElement | null = root.closest('[lang]');
 
       return new Intl.Segmenter(
@@ -382,7 +439,7 @@ export default class MojiSplitter {
         },
       );
     } else {
-      return this.#segmenter as Intl.Segmenter;
+      return this.#segmenter;
     }
   }
 }
