@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.4.2
+ * @version 1.4.3
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -32,6 +32,7 @@ const LBR_PROHIBIT_START_REGEX =
   /^[[[\p{Pd}]--[―]]\p{Pe}\p{Pf}\p{Po}\u00A0々〵〻ぁぃぅぇぉっゃゅょゎゕゖ゛-ゞァィゥェォッャュョヮヵヶー-ヾㇰ-ㇿ]|\p{Pi}/v;
 const LBR_PROHIBIT_END_REGEX = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
 const LBR_INSEPARATABLE_REGEX = /[―‥…]/u;
+const VISUALLY_HIDDEN_CSS = `border: 0; clip: rect(0, 0, 0, 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; user-select: none; white-space: nowrap; width: 1px;`;
 
 // -----------------------------------------------------------------------------
 // APIs
@@ -92,18 +93,18 @@ export default class MojiSplitter {
       this.#fragment.appendChild(child.cloneNode(true));
     }
 
-    this.#nobr();
+    this.#applyNonBreakingRules();
     this.#split('word');
     const { concatChar, lineBreakingRules } = this.#settings;
 
     if (!concatChar && lineBreakingRules) {
-      this.#lbr('word');
+      this.#applyLineBreakingRules('word');
     }
 
     this.#split('char');
 
     if (concatChar && lineBreakingRules) {
-      this.#lbr('char');
+      this.#applyLineBreakingRules('char');
     }
 
     for (let i = 0, l = this.#charElements.length; i < l; i++) {
@@ -153,18 +154,7 @@ export default class MojiSplitter {
       if (!word.hasAttribute('data-whitespace')) {
         const alt = document.createElement('span');
         alt.setAttribute('data-alt', '');
-        alt.style.cssText += `
-          border: 0;
-          clip: rect(0, 0, 0, 0);
-          height: 1px;
-          margin: -1px;
-          overflow: hidden;
-          padding: 0;
-          position: absolute;
-          user-select: none;
-          white-space: nowrap;
-          width: 1px;
-        `;
+        alt.style.cssText += VISUALLY_HIDDEN_CSS;
         alt.textContent = word.textContent;
         word.append(alt);
       }
@@ -198,7 +188,9 @@ export default class MojiSplitter {
     this.#rootElement.setAttribute('data-moji-splitter-initialized', '');
   }
 
-  #nobr(node: Node = this.#fragment ?? new DocumentFragment()) {
+  #applyNonBreakingRules(
+    node: Node = this.#fragment ?? new DocumentFragment(),
+  ) {
     if (node.nodeType === Node.TEXT_NODE) {
       const text = node.textContent;
 
@@ -241,7 +233,7 @@ export default class MojiSplitter {
 
     while (child) {
       const next = child.nextSibling;
-      this.#nobr(child);
+      this.#applyNonBreakingRules(child);
       child = next;
     }
   }
@@ -302,7 +294,7 @@ export default class MojiSplitter {
     }
   }
 
-  #lbr(granularity: Granularity) {
+  #applyLineBreakingRules(granularity: Granularity) {
     let count = 0;
     const items =
       granularity === 'word' ? this.#wordElements : this.#charElements;
