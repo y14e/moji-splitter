@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.4.3
+ * @version 1.4.4
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -96,16 +96,9 @@ export default class MojiSplitter {
     this.#applyNonBreakingRules();
     this.#split('word');
     const { concatChar, lineBreakingRules } = this.#settings;
-
-    if (!concatChar && lineBreakingRules) {
-      this.#applyLineBreakingRules('word');
-    }
-
+    !concatChar && lineBreakingRules && this.#applyLineBreakingRules('word');
     this.#split('char');
-
-    if (concatChar && lineBreakingRules) {
-      this.#applyLineBreakingRules('char');
-    }
+    concatChar && lineBreakingRules && this.#applyLineBreakingRules('char');
 
     for (let i = 0, l = this.#charElements.length; i < l; i++) {
       const char = this.#charElements[i];
@@ -131,14 +124,9 @@ export default class MojiSplitter {
 
       const { style } = span;
       style.setProperty('display', 'inline-block');
-
-      if (
-        Array.from(
-          (this.#segmenter ?? new Intl.Segmenter()).segment(span.textContent),
-        ).length
-      ) {
-        style.setProperty('white-space', 'nowrap');
-      }
+      Array.from(
+        (this.#segmenter ?? new Intl.Segmenter()).segment(span.textContent),
+      ).length && style.setProperty('white-space', 'nowrap');
     }
 
     for (let i = 0, l = this.#wordElements.length; i < l; i++) {
@@ -204,11 +192,7 @@ export default class MojiSplitter {
 
       for (const match of text.matchAll(NOBR_REGEX)) {
         const index = match.index;
-
-        if (index > lastIndex) {
-          fragment.append(text.slice(lastIndex, index));
-        }
-
+        index > lastIndex && fragment.append(text.slice(lastIndex, index));
         const span = document.createElement('span');
         span.setAttribute('data-_nobr', '');
         const matched = match[0];
@@ -217,9 +201,7 @@ export default class MojiSplitter {
         lastIndex = index + matched.length;
       }
 
-      if (lastIndex < text.length) {
-        fragment.append(text.slice(lastIndex));
-      }
+      lastIndex < text.length && fragment.append(text.slice(lastIndex));
 
       if (!(node instanceof Text)) {
         return;
@@ -266,11 +248,7 @@ export default class MojiSplitter {
           const span = document.createElement('span');
           const text = segment.segment;
           span.textContent = text;
-
-          if (text.charCodeAt(0) === 32) {
-            span.setAttribute('data-whitespace', '');
-          }
-
+          text.charCodeAt(0) === 32 && span.setAttribute('data-whitespace', '');
           span.setAttribute(`data-${granularity}`, text);
           items.push(span);
           fragment.append(span);
@@ -378,9 +356,7 @@ export default class MojiSplitter {
         continue;
       }
 
-      if (LBR_INSEPARATABLE_REGEX.test(text)) {
-        concat(i, LBR_INSEPARATABLE_REGEX);
-      }
+      LBR_INSEPARATABLE_REGEX.test(text) && concat(i, LBR_INSEPARATABLE_REGEX);
     }
 
     if (granularity === 'char') {
