@@ -10,21 +10,21 @@ npm i moji-splitter
 
 ```ts
 // npm
-import mojiSplitter from 'moji-splitter';
+import { createMojiSplitter } from 'moji-splitter';
 
 // CDNs
-import mojiSplitter from 'https://esm.sh/moji-splitter'
+import { createMojiSplitter } from 'https://esm.sh/moji-splitter'
 // or
-import mojiSplitter from 'https://cdn.jsdelivr.net/npm/moji-splitter/dist/index.js';
+import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter/dist/index.js';
 // or
-import mojiSplitter from 'https://unpkg.com/moji-splitter/dist/index.js';
+import { createMojiSplitter } from 'https://unpkg.com/moji-splitter/dist/index.js';
 ```
 
-## Usage
+## 📦 APIs
 
 ```ts
-new MojiSplitter(root, options);
-// => MojiSplitter
+const cleanup = createMojiSplitter(root, options);
+// => () => void
 //
 // root: HTMLElement
 // options (optional): MojiSplitterOptions
@@ -51,17 +51,6 @@ If `false`, disables line breaking rules.
 ### `wordSegmenter`
 
 If `true`, uses `Intl.Segmenter` with the `{ granularity: 'word' }` option; useful for CJK (Chinese, Japanese, and Korean) text.
-
-## 📦 APIs
-
-### `destroy`
-
-Destroys the instance and restores the original DOM state.
-
-```ts
-splitter.destroy();
-// => void
-```
 
 ## Demo
 - https://y14e.github.io/moji-splitter/
