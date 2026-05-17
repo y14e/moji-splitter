@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 1.4.4
+ * @version 2.0.0
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -38,7 +38,23 @@ const VISUALLY_HIDDEN_CSS = `border: 0; clip: rect(0, 0, 0, 0); height: 1px; mar
 // APIs
 // -----------------------------------------------------------------------------
 
-export default class MojiSplitter {
+export function createMojiSplitter(
+  root: HTMLElement,
+  options: MojiSplitterOptions = {},
+): () => void {
+  if (!(root instanceof HTMLElement)) {
+    throw new TypeError('Invalid root element');
+  }
+
+  const splitter = new MojiSplitter(root, options);
+  return () => splitter.destroy();
+}
+
+// -----------------------------------------------------------------------------
+// Core
+// -----------------------------------------------------------------------------
+
+class MojiSplitter {
   #rootElement: HTMLElement;
   #defaults = {
     concatChar: false,
@@ -53,11 +69,7 @@ export default class MojiSplitter {
   #segmenter: Intl.Segmenter | null = new Intl.Segmenter();
   #isDestroyed = false;
 
-  constructor(root: HTMLElement, options: MojiSplitterOptions = {}) {
-    if (!(root instanceof HTMLElement)) {
-      throw new TypeError('Invalid root element');
-    }
-
+  constructor(root: HTMLElement, options: MojiSplitterOptions) {
     this.#rootElement = root;
     this.#settings = { ...this.#defaults, ...options };
     this.#original = this.#rootElement.innerHTML;
