@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 2.0.0
+ * @version 2.0.1
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -76,7 +76,7 @@ class MojiSplitter {
     this.#initialize();
   }
 
-  destroy() {
+  destroy(): void {
     if (this.#isDestroyed) {
       return;
     }
@@ -91,7 +91,7 @@ class MojiSplitter {
     this.#original = null;
   }
 
-  #initialize() {
+  #initialize(): void {
     const children = this.#rootElement.childNodes;
     this.#fragment = new DocumentFragment();
 
@@ -190,7 +190,7 @@ class MojiSplitter {
 
   #applyNonBreakingRules(
     node: Node = this.#fragment ?? new DocumentFragment(),
-  ) {
+  ): void {
     if (node.nodeType === Node.TEXT_NODE) {
       const text = node.textContent;
 
@@ -235,7 +235,7 @@ class MojiSplitter {
   #split(
     granularity: Granularity,
     node: Node = this.#fragment ?? new DocumentFragment(),
-  ) {
+  ): void {
     let child = node.firstChild;
     const items =
       granularity === 'word' ? this.#wordElements : this.#charElements;
@@ -284,7 +284,7 @@ class MojiSplitter {
     }
   }
 
-  #applyLineBreakingRules(granularity: Granularity) {
+  #applyLineBreakingRules(granularity: Granularity): void {
     let count = 0;
     const items =
       granularity === 'word' ? this.#wordElements : this.#charElements;
@@ -316,7 +316,7 @@ class MojiSplitter {
       count++;
     }
 
-    function concat(index: number, regex: RegExp) {
+    function concat(index: number, regex: RegExp): void {
       const item = items[index];
 
       if (!item) {
@@ -394,14 +394,17 @@ class MojiSplitter {
     }
   }
 
-  #cleanup() {
+  #cleanup(): void {
     this.#wordElements.length = 0;
     this.#charElements.length = 0;
     this.#fragment = null;
     this.#segmenter = null;
   }
 
-  #getSegmenter(granularity: Granularity, parent: Node | null) {
+  #getSegmenter(
+    granularity: Granularity,
+    parent: Node | null,
+  ): Intl.Segmenter | null {
     if (granularity === 'word' && this.#settings.wordSegmenter) {
       const root =
         parent?.nodeType === Node.ELEMENT_NODE ? parent : this.#rootElement;
