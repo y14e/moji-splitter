@@ -10,14 +10,14 @@ npm i moji-splitter
 
 ```ts
 // npm
-import { createMojiSplitter } from 'moji-splitter@2.0.1';
+import { createMojiSplitter } from 'moji-splitter@3.0.0';
 
 // CDNs
-import { createMojiSplitter } from 'https://esm.sh/moji-splitter@2.0.1';
+import { createMojiSplitter } from 'https://esm.sh/moji-splitter@3.0.0';
 // or
-import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter@2.0.1/dist/index.js';
+import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter@3.0.0/dist/index.js';
 // or
-import { createMojiSplitter } from 'https://esm.unpkg.com/moji-splitter@2.0.1';
+import { createMojiSplitter } from 'https://esm.unpkg.com/moji-splitter@3.0.0';
 ```
 
 ## 📦 APIs
@@ -34,9 +34,9 @@ const cleanup = createMojiSplitter(root, options);
 
 ```ts
 interface MojiSplitterOptions {
-  concatChar?: boolean;        // default: false
-  lineBreakingRules?: boolean; // default: true
-  wordSegmenter?: boolean;     // default: false
+  concatChar?: boolean;          // default: false
+  noLineBreakingRules?: boolean; // default: false
+  wordSegmenter?: boolean;       // default: false
 }
 ```
 
@@ -44,9 +44,9 @@ interface MojiSplitterOptions {
 
 If `true`, enables concatenation at the character level.
 
-### `lineBreakingRules`
+### `noLineBreakingRules`
 
-If `false`, disables line breaking rules.
+If `true`, disables line breaking rules.
 
 ### `wordSegmenter`
 

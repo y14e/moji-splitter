@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 2.0.1
+ * @version 3.0.0
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -16,7 +16,7 @@
 
 export interface MojiSplitterOptions {
   readonly concatChar?: boolean;
-  readonly lineBreakingRules?: boolean;
+  readonly noLineBreakingRules?: boolean;
   readonly wordSegmenter?: boolean;
 }
 
@@ -43,7 +43,8 @@ export function createMojiSplitter(
   options: MojiSplitterOptions = {},
 ): () => void {
   if (!(root instanceof HTMLElement)) {
-    throw new TypeError('Invalid root element');
+    console.warn('Invalid root element');
+    return () => {};
   }
 
   const splitter = new MojiSplitter(root, options);
@@ -58,7 +59,7 @@ class MojiSplitter {
   #rootElement: HTMLElement;
   #defaults = {
     concatChar: false,
-    lineBreakingRules: true,
+    noLineBreakingRules: false,
     wordSegmenter: false,
   };
   #settings: Required<MojiSplitterOptions>;
@@ -107,10 +108,10 @@ class MojiSplitter {
 
     this.#applyNonBreakingRules();
     this.#split('word');
-    const { concatChar, lineBreakingRules } = this.#settings;
-    !concatChar && lineBreakingRules && this.#applyLineBreakingRules('word');
+    const { concatChar, noLineBreakingRules } = this.#settings;
+    !concatChar && !noLineBreakingRules && this.#applyLineBreakingRules('word');
     this.#split('char');
-    concatChar && lineBreakingRules && this.#applyLineBreakingRules('char');
+    concatChar && !noLineBreakingRules && this.#applyLineBreakingRules('char');
 
     for (let i = 0, l = this.#charElements.length; i < l; i++) {
       const char = this.#charElements[i];
