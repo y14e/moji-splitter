@@ -10,14 +10,14 @@ npm i moji-splitter
 
 ```ts
 // npm
-import { createMojiSplitter } from 'moji-splitter@3.0.0';
+import { createMojiSplitter } from 'moji-splitter';
 
 // CDNs
-import { createMojiSplitter } from 'https://esm.sh/moji-splitter@3.0.0';
+import { createMojiSplitter } from 'https://esm.sh/moji-splitter@3.0.1';
 // or
-import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter@3.0.0/dist/index.js';
+import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter@3.0.1/dist/index.js';
 // or
-import { createMojiSplitter } from 'https://esm.unpkg.com/moji-splitter@3.0.0';
+import { createMojiSplitter } from 'https://esm.unpkg.com/moji-splitter@3.0.1';
 ```
 
 ## 📦 APIs
