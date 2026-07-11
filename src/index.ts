@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 3.0.1
+ * @version 3.0.2
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -15,9 +15,9 @@
 // -----------------------------------------------------------------------------
 
 export interface MojiSplitterOptions {
-  readonly concatChar?: boolean;
-  readonly noLineBreakingRules?: boolean;
-  readonly wordSegmenter?: boolean;
+  concatChar: boolean;
+  noLineBreakingRules: boolean;
+  wordSegmenter: boolean;
 }
 
 type Granularity = 'word' | 'char';
@@ -40,7 +40,7 @@ const VISUALLY_HIDDEN_CSS = `border: 0; clip: rect(0, 0, 0, 0); height: 1px; mar
 
 export function createMojiSplitter(
   root: HTMLElement,
-  options: MojiSplitterOptions = {},
+  options: Partial<MojiSplitterOptions> = {},
 ): () => void {
   if (!(root instanceof HTMLElement)) {
     console.warn('Invalid root element');
@@ -62,7 +62,7 @@ class MojiSplitter {
     noLineBreakingRules: false,
     wordSegmenter: false,
   };
-  #settings: Required<MojiSplitterOptions>;
+  #settings: MojiSplitterOptions;
   #wordElements: HTMLElement[] = [];
   #charElements: HTMLElement[] = [];
   #original: string | null;
@@ -70,7 +70,7 @@ class MojiSplitter {
   #segmenter: Intl.Segmenter | null = new Intl.Segmenter();
   #isDestroyed = false;
 
-  constructor(root: HTMLElement, options: MojiSplitterOptions) {
+  constructor(root: HTMLElement, options: Partial<MojiSplitterOptions> = {}) {
     this.#rootElement = root;
     this.#settings = { ...this.#defaults, ...options };
     this.#original = this.#rootElement.innerHTML;

@@ -13,11 +13,11 @@ npm i moji-splitter
 import { createMojiSplitter } from 'moji-splitter';
 
 // CDNs
-import { createMojiSplitter } from 'https://esm.sh/moji-splitter@3.0.1';
+import { createMojiSplitter } from 'https://esm.sh/moji-splitter@3.0.2';
 // or
-import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter@3.0.1/dist/index.js';
+import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter@3.0.2/dist/index.js';
 // or
-import { createMojiSplitter } from 'https://esm.unpkg.com/moji-splitter@3.0.1';
+import { createMojiSplitter } from 'https://esm.unpkg.com/moji-splitter@3.0.2';
 ```
 
 ## 📦 APIs
@@ -34,9 +34,9 @@ const cleanup = createMojiSplitter(root, options);
 
 ```ts
 interface MojiSplitterOptions {
-  concatChar?: boolean;          // default: false
-  noLineBreakingRules?: boolean; // default: false
-  wordSegmenter?: boolean;       // default: false
+  concatChar: boolean;          // default: false
+  noLineBreakingRules: boolean; // default: false
+  wordSegmenter: boolean;       // default: false
 }
 ```
 
