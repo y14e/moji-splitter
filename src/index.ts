@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 3.0.2
+ * @version 3.0.3
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -20,7 +20,7 @@ export interface MojiSplitterOptions {
   wordSegmenter: boolean;
 }
 
-type Granularity = 'word' | 'char';
+type MojiSplitterGranularity = 'word' | 'char';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -165,7 +165,6 @@ class MojiSplitter {
     const { style } = this.#rootElement;
     style.setProperty('--word-length', String(this.#wordElements.length));
     style.setProperty('--char-length', String(this.#charElements.length));
-
     const whitespaces = this.#rootElement.querySelectorAll<HTMLElement>(
       ':scope > :not([data-word]) [data-char][data-whitespace]',
     );
@@ -234,7 +233,7 @@ class MojiSplitter {
   }
 
   #split(
-    granularity: Granularity,
+    granularity: MojiSplitterGranularity,
     node: Node = this.#fragment ?? new DocumentFragment(),
   ): void {
     let child = node.firstChild;
@@ -285,7 +284,7 @@ class MojiSplitter {
     }
   }
 
-  #applyLineBreakingRules(granularity: Granularity): void {
+  #applyLineBreakingRules(granularity: MojiSplitterGranularity): void {
     let count = 0;
     const items =
       granularity === 'word' ? this.#wordElements : this.#charElements;
@@ -385,12 +384,7 @@ class MojiSplitter {
         }
 
         const text = span.textContent;
-
-        if (text) {
-          span.setAttribute('data-word', text);
-        } else {
-          span.remove();
-        }
+        text ? span.setAttribute('data-word', text) : span.remove();
       }
     }
   }
@@ -403,7 +397,7 @@ class MojiSplitter {
   }
 
   #getSegmenter(
-    granularity: Granularity,
+    granularity: MojiSplitterGranularity,
     parent: Node | null,
   ): Intl.Segmenter | null {
     if (granularity === 'word' && this.#settings.wordSegmenter) {
