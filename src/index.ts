@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 3.0.3
+ * @version 3.1.0
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -16,6 +16,7 @@
 
 export interface MojiSplitterOptions {
   concatChar: boolean;
+  noInlineStyle: boolean;
   noLineBreakingRules: boolean;
   wordSegmenter: boolean;
 }
@@ -59,6 +60,7 @@ class MojiSplitter {
   #rootElement: HTMLElement;
   #defaults = {
     concatChar: false,
+    noInlineStyle: false,
     noLineBreakingRules: false,
     wordSegmenter: false,
   };
@@ -124,22 +126,24 @@ class MojiSplitter {
       char.style.setProperty('--char-index', String(i));
     }
 
-    const spans = this.#fragment.querySelectorAll<HTMLElement>(
-      ':is([data-word], [data-char]):not([data-whitespace])',
-    );
+    if (!this.#settings.noInlineStyle) {
+      const spans = this.#fragment.querySelectorAll<HTMLElement>(
+        ':is([data-word], [data-char]):not([data-whitespace])',
+      );
 
-    for (let i = 0, l = spans.length; i < l; i++) {
-      const span = spans[i];
+      for (let i = 0, l = spans.length; i < l; i++) {
+        const span = spans[i];
 
-      if (!span) {
-        continue;
+        if (!span) {
+          continue;
+        }
+
+        const { style } = span;
+        style.setProperty('display', 'inline-block');
+        Array.from(
+          (this.#segmenter ?? new Intl.Segmenter()).segment(span.textContent),
+        ).length && style.setProperty('white-space', 'nowrap');
       }
-
-      const { style } = span;
-      style.setProperty('display', 'inline-block');
-      Array.from(
-        (this.#segmenter ?? new Intl.Segmenter()).segment(span.textContent),
-      ).length && style.setProperty('white-space', 'nowrap');
     }
 
     for (let i = 0, l = this.#wordElements.length; i < l; i++) {
@@ -155,7 +159,11 @@ class MojiSplitter {
       if (!word.hasAttribute('data-whitespace')) {
         const alt = document.createElement('span');
         alt.setAttribute('data-alt', '');
-        alt.style.cssText += VISUALLY_HIDDEN_CSS;
+
+        if (!this.#settings.noInlineStyle) {
+          alt.style.cssText += VISUALLY_HIDDEN_CSS;
+        }
+
         alt.textContent = word.textContent;
         word.append(alt);
       }
