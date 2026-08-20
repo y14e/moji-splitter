@@ -13,11 +13,11 @@ npm i moji-splitter
 import { createMojiSplitter } from 'moji-splitter';
 
 // CDNs
-import { createMojiSplitter } from 'https://esm.sh/moji-splitter@3.1.1';
+import { createMojiSplitter } from 'https://esm.sh/moji-splitter@3.1.2';
 // or
-import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter@3.1.1/dist/index.js';
+import { createMojiSplitter } from 'https://cdn.jsdelivr.net/npm/moji-splitter@3.1.2/dist/index.js';
 // or
-import { createMojiSplitter } from 'https://esm.unpkg.com/moji-splitter@3.1.1';
+import { createMojiSplitter } from 'https://esm.unpkg.com/moji-splitter@3.1.2';
 ```
 
 ## 📦 APIs
@@ -54,5 +54,6 @@ If `true`, disables line breaking rules.
 If `true`, uses `Intl.Segmenter` with the `{ granularity: 'word' }` option; useful for CJK (Chinese, Japanese, and Korean) text.
 
 ## Demo
+
 - https://y14e.github.io/moji-splitter/
 - https://y14e.github.io/moji-splitter/test.html
