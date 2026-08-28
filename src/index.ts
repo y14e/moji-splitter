@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 3.1.3
+ * @version 3.1.4
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -21,7 +21,7 @@ export interface MojiSplitterOptions {
   wordSegmenter: boolean;
 }
 
-type MojiSplitterGranularity = 'word' | 'char';
+type Granularity = 'word' | 'char';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -241,7 +241,7 @@ class MojiSplitter {
   }
 
   #split(
-    granularity: MojiSplitterGranularity,
+    granularity: Granularity,
     node: Node = this.#fragment ?? new DocumentFragment(),
   ): void {
     let child = node.firstChild;
@@ -292,7 +292,7 @@ class MojiSplitter {
     }
   }
 
-  #applyLineBreakingRules(granularity: MojiSplitterGranularity): void {
+  #applyLineBreakingRules(granularity: Granularity): void {
     let count = 0;
     const items =
       granularity === 'word' ? this.#wordElements : this.#charElements;
@@ -405,7 +405,7 @@ class MojiSplitter {
   }
 
   #getSegmenter(
-    granularity: MojiSplitterGranularity,
+    granularity: Granularity,
     parent: Node | null,
   ): Intl.Segmenter | null {
     if (granularity === 'word' && this.#settings.wordSegmenter) {
