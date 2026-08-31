@@ -3,7 +3,7 @@
  * Flexible text splitting utility for CSS animations.
  * Supports complex line breaking rules (ja: Kinsoku shori).
  *
- * @version 3.1.4
+ * @version 3.1.5
  * @author Yusuke Kamiyamane
  * @license MIT
  * @copyright Copyright (c) Yusuke Kamiyamane
@@ -27,12 +27,12 @@ type Granularity = 'word' | 'char';
 // Constants
 // -----------------------------------------------------------------------------
 
-const NOBR_REGEX =
+const NOBR_RE =
   /[[[\P{scx=Han}]&&[\P{scx=Hang}]&&[\P{scx=Hira}]&&[\P{scx=Kana}]&&[\p{L}]]!-,.->@\[-`\{-~\u00A0]+/gv;
-const LBR_PROHIBIT_START_REGEX =
+const LBR_PROHIBIT_START_RE =
   /^[[[\p{Pd}]--[―]]\p{Pe}\p{Pf}\p{Po}\u00A0々〵〻ぁぃぅぇぉっゃゅょゎゕゖ゛-ゞァィゥェォッャュョヮヵヶー-ヾㇰ-ㇿ]|\p{Pi}/v;
-const LBR_PROHIBIT_END_REGEX = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
-const LBR_INSEPARATABLE_REGEX = /[―‥…]/u;
+const LBR_PROHIBIT_END_RE = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
+const LBR_INSEPARATABLE_RE = /[―‥…]/u;
 const VISUALLY_HIDDEN_CSS = `border: 0; clip: rect(0, 0, 0, 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; user-select: none; white-space: nowrap; width: 1px;`;
 
 // -----------------------------------------------------------------------------
@@ -202,15 +202,15 @@ class MojiSplitter {
     if (node.nodeType === Node.TEXT_NODE) {
       const text = node.textContent;
 
-      if (!text || !NOBR_REGEX.test(text)) {
+      if (!text || !NOBR_RE.test(text)) {
         return;
       }
 
-      NOBR_REGEX.lastIndex = 0;
+      NOBR_RE.lastIndex = 0;
       let lastIndex = 0;
       const fragment = document.createDocumentFragment();
 
-      for (const match of text.matchAll(NOBR_REGEX)) {
+      for (const match of text.matchAll(NOBR_RE)) {
         const index = match.index;
         index > lastIndex && fragment.append(text.slice(lastIndex, index));
         const span = document.createElement('span');
@@ -308,10 +308,7 @@ class MojiSplitter {
 
       let text = item.textContent ?? '';
 
-      if (
-        previous?.textContent?.trim() &&
-        LBR_PROHIBIT_START_REGEX.test(text)
-      ) {
+      if (previous?.textContent?.trim() && LBR_PROHIBIT_START_RE.test(text)) {
         text = (previous.textContent ?? '') + text;
         previous.textContent = text;
         previous.setAttribute(`data-${granularity}`, text);
@@ -324,7 +321,7 @@ class MojiSplitter {
       count++;
     }
 
-    function concat(index: number, regex: RegExp): void {
+    function concat(index: number, re: RegExp): void {
       const item = items[index];
 
       if (!item) {
@@ -343,7 +340,7 @@ class MojiSplitter {
 
         const nextText = next.textContent ?? '';
 
-        if (!regex.test(nextText)) {
+        if (!re.test(nextText)) {
           break;
         }
 
@@ -360,8 +357,8 @@ class MojiSplitter {
       const item = items[i];
       const text = item?.textContent ?? '';
 
-      if (LBR_PROHIBIT_END_REGEX.test(text)) {
-        concat(i, LBR_PROHIBIT_END_REGEX);
+      if (LBR_PROHIBIT_END_RE.test(text)) {
+        concat(i, LBR_PROHIBIT_END_RE);
         const next = items[i + 1];
 
         if (next?.textContent?.trim()) {
@@ -376,7 +373,7 @@ class MojiSplitter {
         continue;
       }
 
-      LBR_INSEPARATABLE_REGEX.test(text) && concat(i, LBR_INSEPARATABLE_REGEX);
+      LBR_INSEPARATABLE_RE.test(text) && concat(i, LBR_INSEPARATABLE_RE);
     }
 
     if (granularity === 'char') {
